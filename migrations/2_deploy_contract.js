@@ -5,7 +5,7 @@ const path = require("path");
 const writeFile = util.promisify(fs.writeFile);
 
 module.exports = async function(deployer) {
-  const elfToken = await deployer.deploy(ElfToken);
+  const elfToken = await deployer.deploy(ElfToken, "ElfToken", "ELF");
   // const addresses = {
   //   tokenAddress: elfToken.address
   // };

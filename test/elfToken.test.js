@@ -9,35 +9,43 @@ contract("Elf token", accounts => {
     assert.equal(owner, accounts[0]);
   });
 
-  describe("mint elf", () => {
-    it("creates elf with specified nickname and description", async () => {
-      let instance = await ElfToken.deployed();
-      let owner = await instance.owner();
+  it("Should get contract name", async () => {
+    let instance = await ElfToken.deployed();
+    let name = await instance.name();
+    assert.equal(name, "ElfToken");
+  });
 
-      let token = await instance.mint("Portal", "Network");
-      let tokens = await instance.tokensOf(owner);
-      let elfs = await instance.getElf(tokens[0]);
-      assert.deepEqual(elfs, ["Portal", "Network"]);
+  it("Should get contract symbol", async () => {
+    let instance = await ElfToken.deployed();
+    let symbol = await instance.symbol();
+    assert.equal(symbol, "ELF");
+  });
+
+  it("Should get contract owner", async () => {
+    let instance = await ElfToken.deployed();
+    let owner = await instance.owner();
+    assert.equal(owner, accounts[0]);
+  });
+
+  describe("Should mint elf", () => {
+    it("Creates elf with specified URI", async () => {
+      let instance = await ElfToken.deployed();
+
+      let token = await instance.mint(accounts[1], '{name: "Portal Network", description: "A gateway to the decentralized world"}');
+      let tokenURI = await instance.tokenURI(0);
+      assert.deepEqual(tokenURI, '{name: "Portal Network", description: "A gateway to the decentralized world"}');
     });
 
-    it("get elf token uri", async () => {
+    it("Set elf token uri", async () => {
       let instance = await ElfToken.deployed();
-      let tokens = await instance.tokensOf(accounts[0]);
-      let elfURI = await instance.tokenURI(tokens[0]);
-      assert.equal(elfURI, "AWESOME ELF");
+      await assertRevert(instance.setTokenURI(0, '{name: "0", description: "Do not work!"}', {from: accounts[2]}));
+      await instance.setTokenURI(0, '{name: "0", description: "Do not work!"}', {from: accounts[1]});
+
+      let tokenURI = await instance.tokenURI(0);
+      assert.equal(tokenURI, '{name: "0", description: "Do not work!"}');
     });
 
-    it("set elf token uri", async () => {
-      let instance = await ElfToken.deployed();
-      let tokens = await instance.tokensOf(accounts[0]);
-      await assertRevert(instance.setTokenURI(tokens[0], "HERO", {from: accounts[1]}));
-      await instance.setTokenURI(tokens[0], "HERO");
-
-      let elfURI = await instance.tokenURI(tokens[0]);
-      assert.equal(elfURI, "HERO");
-    });
-
-    it("allows to mint only to owner", async () => {
+    it("Should transfer ownership", async () => {
       let instance = await ElfToken.deployed();
       let other = accounts[1];
 
@@ -46,7 +54,6 @@ contract("Elf token", accounts => {
       await instance.transferOwnership(other);
       let newOwner = await instance.owner();
       assert.equal(newOwner, accounts[1]);
-      await assertRevert(instance.mint("Portal", "Network"));
     });
   });
 });

@@ -1,6 +1,6 @@
-# ERC721 Elf Token
+# ERC721 - ElfToken
 
-This repo is an example for ERC721 about non-fungible token, using OpenZepplin .
+This repo is an example for ERC721 about non-fungible token, using [OpenZepplin](https://github.com/OpenZeppelin/openzeppelin-solidity).
 Simple ERC721 contract.
 
 ## How To Install Dependencies

@@ -45,6 +45,13 @@ contract("Elf token", accounts => {
       assert.equal(tokenURI, '{name: "0", description: "Do not work!"}');
     });
 
+    it("Get token owner", async () => {
+      let instance = await ElfToken.deployed();
+      let owner = await instance.ownerOf(0);
+      
+      assert.equal(owner, accounts[1]);
+    });
+
     it("Should transfer ownership", async () => {
       let instance = await ElfToken.deployed();
       let other = accounts[1];
